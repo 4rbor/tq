@@ -61,12 +61,6 @@ fn main() {
      * and then performing the division.
      */
 
-    println!("Reading toml file: \n\n{}", toml_file);
-    let package = toml_file["package"].as_table().expect("whatever");
-    for (key, val) in package {
-        println!("key: {}, value: {}", key, val);
-    }
-
     /***
      * Basic filters:
      *
@@ -77,7 +71,27 @@ fn main() {
      * Object Identifier-Index: .foo, .foo.bar
      * - The simplest useful filter is: .foo
      *   When given TOML as an input, it gets the value in the table row "foo"
+     *
+     * Optional Object Identifier Index: .foo?
+     * - Just like .foo, but does not output even an error when . is not an array or an object.
+     *
+     * Generic Object Index: .[<string>]
+     * - You can also look up fields of an object using syntax like .["foo"]
+     *   (.foo above is a shorthand version of this, but only for identifier-like strings).
+     *
+     * Array Index: .[2]
+     * When the index value is an integer, .[<value>] can index arrays. Arrays are zero-based, so .[2] returns the third element.
      */
+
+    // Step 1, read the input string, determine execution order
+    // Step 2: access the toml_file to get strings, tables, etc
+    // Step 3: handle various piping scenarios
+    // Step 4: output
+    println!("Reading toml file: \n\n{}", toml_file);
+    let package = toml_file["package"].as_table().expect("whatever");
+    for (key, val) in package {
+        println!("key: {}, value: {}", key, val);
+    }
 
     let version = toml_file["version"].as_str().expect("whatever");
     println!("version {}", version);
