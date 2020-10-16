@@ -44,8 +44,6 @@ fn main() {
         None => load_toml_from_stdn().unwrap(),
     };
 
-    // .{}
-
     /***
      * One of the first things we'll want to do is deal with filters
      * and how to pipe results from one filter to another. From the JQ manual:
@@ -81,12 +79,28 @@ fn main() {
      *
      * Array Index: .[2]
      * When the index value is an integer, .[<value>] can index arrays. Arrays are zero-based, so .[2] returns the third element.
+     *
+     * Pipe: |
+     * Combines two filters by feeding the output(s) of the one on the left into
+     * the input of the one on the right. It's pretty much the same as the Unix shell's
+     * pipe, if you're used to that. If the one on the left produces multiple results,
+     * the one on the right will be run for each of those results. So, the expression
+     * .[] | .foo retrieves the "foo" field of each element of the input array. Note
+     * that .a.b.c is the same as .a | .b | .c. Note too that . is the input value at
+     * the particular stage in a "pipeline", specifically: where the . expression
+     * appears. Thus .a | . | .b is the same as .a.b, as the . in the middle refers
+     * to whatever value .a produced.
      */
 
     // Step 1, read the input string, determine execution order
     // Step 2: access the toml_file to get strings, tables, etc
     // Step 3: handle various piping scenarios
     // Step 4: output
+    let filter_str = matches.value_of("filter").unwrap();
+    // break out string into various arrays so that we can pipe each value
+    // into the next filter.
+    let _filters = filter_str.split("|");
+
     println!("Reading toml file: \n\n{}", toml_file);
     let package = toml_file["package"].as_table().expect("whatever");
     for (key, val) in package {
