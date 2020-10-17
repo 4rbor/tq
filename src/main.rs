@@ -41,7 +41,7 @@ fn main() {
 
     let toml_file: toml::Value = match matches.value_of("file") {
         Some(file) => load_toml_from_file(file).unwrap(),
-        None => load_toml_from_stdn().unwrap(),
+        None => load_toml_from_stdin().unwrap(),
     };
 
     /***
@@ -131,7 +131,7 @@ fn load_toml_from_file(name: &str) -> Result<toml::Value> {
     toml::from_str(&contents).chain_err(|| "File is not valid TOML.")
 }
 
-fn load_toml_from_stdn() -> Result<toml::Value> {
+fn load_toml_from_stdin() -> Result<toml::Value> {
     let mut content = String::new();
     let _ = io::stdin().lock().read_to_string(&mut content);
 
