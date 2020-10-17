@@ -96,19 +96,31 @@ fn main() {
     // Step 2: access the toml_file to get strings, tables, etc
     // Step 3: handle various piping scenarios
     // Step 4: output
-    let filter_str = matches.value_of("filter").unwrap();
-    // break out string into various arrays so that we can pipe each value
-    // into the next filter.
-    let _filters = filter_str.split("|");
+    let full_filter_string = matches.value_of("filter").unwrap();
+    let filter_pass = full_filter_string.split("|");
+    let value = filter_pass.fold(&toml_file, |acc, filter_str| {
+        // Identity filter
+        if filter_str.trim() == "." {
+            return acc;
+        }
 
-    println!("Reading toml file: \n\n{}", toml_file);
-    let package = toml_file["package"].as_table().expect("whatever");
-    for (key, val) in package {
-        println!("key: {}, value: {}", key, val);
-    }
+        let keys = filter_str.split(".");
+        let _count = filter_str.split(".").count();
 
-    let version = toml_file["version"].as_str().expect("whatever");
-    println!("version {}", version);
+        let mut toml_value = &toml_file;
+        for key in keys {
+            let trimmed_key = key.trim();
+            if trimmed_key == "" {
+                continue;
+            }
+
+            toml_value = toml_value.get(key).unwrap();
+        }
+        return toml_value;
+    });
+
+    println!("{}", value);
+    std::process::exit(0);
 }
 
 fn load_toml_from_file(name: &str) -> Result<toml::Value> {
