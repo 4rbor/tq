@@ -18,8 +18,3 @@ pub fn load_toml_from_stdin() -> Result<toml::Value> {
 
     toml::from_str(&content).chain_err(|| "File is not valid TOML.")
 }
-
-#[test]
-fn load_toml_from_file_without_crash() {
-    let _foo = load_toml_from_file("../test/fixtures/test_01.toml");
-}
