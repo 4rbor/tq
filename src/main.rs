@@ -61,27 +61,7 @@ fn main() {
     // Step 3: handle various piping scenarios
     // Step 4: output
     let full_filter_string = matches.value_of("filter").unwrap();
-    let filter_pass = full_filter_string.split("|");
-    let value = filter_pass.fold(&toml_file, |acc, filter_str| {
-        // Identity filter
-        if filter_str.trim() == "." {
-            return acc;
-        }
-
-        let keys = filter_str.split(".");
-        let _count = filter_str.split(".").count();
-
-        let mut toml_value = &toml_file;
-        for key in keys {
-            let trimmed_key = key.trim();
-            if trimmed_key == "" {
-                continue;
-            }
-
-            toml_value = toml_value.get(key).unwrap();
-        }
-        return toml_value;
-    });
+    let value = tq::filter::apply_filters(toml_file, full_filter_string);
 
     println!("{}", value);
     std::process::exit(0);

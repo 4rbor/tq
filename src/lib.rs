@@ -9,6 +9,7 @@ pub mod errors {
     error_chain! {}
 }
 
+pub mod filter;
 pub mod load_toml;
 
 pub fn read_args() -> ArgMatches<'static> {
