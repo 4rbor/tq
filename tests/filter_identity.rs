@@ -2,26 +2,15 @@ use assert_cmd::prelude::*; // Add methods on commands
 use predicates::prelude::*; // Used for writing assertions
 use std::io::prelude::*;
 use std::process::{Command, Stdio}; // Run programs
+mod common;
 
-fn get_fixture_path(file_name: &str) -> String {
-  format!(
-    "{project_root}/tests/fixtures/{file_name}",
-    project_root = env!("CARGO_MANIFEST_DIR"),
-    file_name = file_name
-  )
-}
-
-// * Identity: .
-// *  - The absolute simplest filter is: .
-// *    This is a filter that takes its input and produces it unchanged as output. That is, this is the identity operator.
-// *
 #[test]
 fn test_identity_filter_file_arg() -> Result<(), Box<dyn std::error::Error>> {
   let mut cmd = Command::cargo_bin("tq")?;
 
   cmd
     .arg("--file")
-    .arg(get_fixture_path("test_01.toml"))
+    .arg(common::get_fixture_path("test_01.toml"))
     .arg(".");
 
   cmd.assert().success().stdout(predicate::str::contains(
@@ -46,7 +35,7 @@ fn test_identity_filter_stdin() -> Result<(), Box<dyn std::error::Error>> {
     Ok(process) => process,
   };
 
-  let toml_str = std::fs::read_to_string(get_fixture_path("test_01.toml"))?;
+  let toml_str = std::fs::read_to_string(common::get_fixture_path("test_01.toml"))?;
   let toml_bytes = toml_str.into_bytes();
 
   match process.stdin.unwrap().write_all(&toml_bytes) {
@@ -68,5 +57,3 @@ fn test_identity_filter_stdin() -> Result<(), Box<dyn std::error::Error>> {
 
   Ok(())
 }
-
-// TODO: Test if "--file" is provided but file does not exist
