@@ -22,7 +22,7 @@ jobs:
           templatePath: "support/homebrew-formula.rb"
           tapRepo: "4rbor/homebrew-tq"
           srcRepo: "4rbor/tq"
-          authToken: ${{ secrets.GITHUB_TOKEN }}
+          authToken: ${{ secrets.AUTH_TOKEN }}
 
           # cargo build --release
           # tar -czf .arbor/tq-mac.tar.gz ./target/release/tq
