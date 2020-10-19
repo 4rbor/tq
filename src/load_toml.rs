@@ -21,5 +21,5 @@ pub fn load_toml_from_stdin() -> Result<toml::Value> {
 
 #[test]
 fn load_toml_from_file_without_crash() {
-    let _foo = load_toml_from_file("../test/fixtures/test_01.toml");
+    let _foo = load_toml_from_file("../tests/fixtures/test_01.toml");
 }
