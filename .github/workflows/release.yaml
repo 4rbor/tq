@@ -30,7 +30,7 @@ jobs:
       - name: Build Binaries
         run: |
           cargo build --release
-          tar -czf .arbor/tq-mac.tar.gz ./target/release/tq
+          tar -czf .arbor/tq-mac.tar.gz -C ./target/release tq
           echo "::set-env name=SHA256::$(shasum -a 256 .arbor/tq-mac.tar.gz | awk '{ print $1 }')"
 
       - name: Create Github Release
