@@ -1,3 +1,4 @@
 /target
 .arbor/*
 !.arbor/.gitkeep
+.DS_Store
