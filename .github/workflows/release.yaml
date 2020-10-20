@@ -1,5 +1,9 @@
 name: Update Homebrew Formula
 
+defaults:
+  run:
+    shell: bash
+
 on:
   push:
     branches:
@@ -18,11 +22,11 @@ jobs:
       - name: Setup variables
         run: |
           export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
+          echo $APP_VERSION
           echo "::set-env name=APP_VERSION::$APP_VERSION"
       # cargo build --release
       # tar -czf .arbor/tq-mac.tar.gz ./target/release/tq
       # sed -i "" "s/{{tarball}}/test/" support/homebrew-formula.rb
-      # VER=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
       # git clone git@github.com:4rbor/homebrew-tq.git
       # rm homebrew-tq/Formula/tq.rb
       # cp tq.rb homebrew-tq/Formula/tq.rb
@@ -60,6 +64,7 @@ jobs:
           asset_path: ./.arbor/tq-mac.tar.gz
           asset_name: tq-mac.tar.gz
           asset_content_type: application/gzip
+
   # homebrew-release:
   #   runs-on: macos-latest
   #   steps:
