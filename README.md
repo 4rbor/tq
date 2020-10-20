@@ -1,4 +1,4 @@
-# tq
+# tq ![release](https://img.shields.io/github/v/release/4rbor/tq) ![build status](https://img.shields.io/github/workflow/status/4rbor/tq/Build)
 
 Command line TOML processor
 
