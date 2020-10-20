@@ -73,7 +73,6 @@ jobs:
           sed -i "s@_sha256_@$SHA256@" ./Formula/tq.rb
           sed -i "s@_version_@$APP_VERSION@" ./Formula/tq.rb
           cat Formula/tq.rb
-
-      # git add -A
-      # git commit -m "Update to version: $VER"
-      # git push
+          git add .
+          git commit -m "Update to version: $APP_VERSION"
+          git push
