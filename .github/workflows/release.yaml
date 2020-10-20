@@ -42,7 +42,7 @@ jobs:
           draft: false
           prerelease: false
       - name: Export Release URL
-        run: echo ${{steps.create_release.outputs.upload_url}} > upload_url.txt
+        run: echo "${{steps.create_release.outputs.upload_url}}" > upload_url.txt
       - name: Upload Shared Release URL
         uses: actions/upload-artifact@v2
         with:
