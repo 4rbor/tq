@@ -27,6 +27,49 @@ jobs:
           export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
           echo "::set-env name=APP_VERSION::$APP_VERSION"
 
+      - name: Build Binaries
+        run: |
+          cargo build --release
+          tar -czf .arbor/tq-mac.tar.gz ./target/release/tq
+          echo "::set-env name=SHA256::$(shasum -a 256 .arbor/tq-mac.tar.gz)"
+
+      # - name: Create Github Release
+      #   id: create_release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      #   with:
+      #     tag_name: ${{ env.APP_VERSION }}
+      #     release_name: Release ${{ env.APP_VERSION }}
+      #     body: |
+      #       Automated Release
+      #     draft: false
+      #     prerelease: false
+
+      # - name: Upload Release Assets to Github
+      #   id: upload-release-asset
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./.arbor/tq-mac.tar.gz
+      #     asset_name: tq-mac.tar.gz
+      #     asset_content_type:
+      #       application/gzip
+
+      # browser_download_url
+
+      - name: Homebrew Release
+        id: create-homebrew-release
+        run: |
+          git clone git@github.com:4rbor/homebrew-tq.git
+          cd homebrew-tq
+          sed -i "" "s/{{tarball}}/$APP_VERSION/" support/homebrew-formula.rb
+          sed -i "" "s/{{sha256}}/$SHA256/" support/homebrew-formula.rb
+          sed -i "" "s/{{version}}/$APP_VERSION/" support/homebrew-formula.rb
+          cat support/homebrew-formula.rb
+
       # sed -i "" "s/{{tarball}}/test/" support/homebrew-formula.rb
       # git clone git@github.com:4rbor/homebrew-tq.git
       # rm homebrew-tq/Formula/tq.rb
@@ -35,34 +78,6 @@ jobs:
       # git add -A
       # git commit -m "Update to version: $VER"
       # git push
-
-      - name: Build Binaries
-        run: |
-          cargo build --release
-          tar -czf .arbor/tq-mac.tar.gz ./target/release/tq
-          echo "::set-env name=SHA256::$(shasum -a 256 .arbor/tq-mac.tar.gz)"
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ env.APP_VERSION }}
-          release_name: Release ${{ env.APP_VERSION }}
-          body: |
-            Automated Release
-          draft: false
-          prerelease: false
-      - name: Upload Release Assets
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./.arbor/tq-mac.tar.gz
-          asset_name: tq-mac.tar.gz
-          asset_content_type: application/gzip
 
   # homebrew-release:
   #   runs-on: macos-latest
