@@ -4,8 +4,8 @@ class Tq < Formula
   version "_version_"
 
   if OS.mac?
-    url "_tarball_"
-    sha256 "_sha256_"
+    url "_macos_tarball_"
+    sha256 "_macos_sha256_"
   elsif OS.linux?
     url "_linux_tarball_"
     sha256 "_linux_sha256_"
