@@ -1,7 +1,7 @@
 class Tq < Formula
   desc "Command line TOML Processor"
   homepage "https://github.com/4rbor/tq"
-  url "{{{tarballUrl}}}"
+  url "{{tarball}}"
   version "{{version}}"
   sha256 "{{sha256}}"
 
