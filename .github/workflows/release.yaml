@@ -19,13 +19,15 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Setup variables
         run: |
           export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
           echo $APP_VERSION
           echo "::set-env name=APP_VERSION::$APP_VERSION"
-      # cargo build --release
-      # tar -czf .arbor/tq-mac.tar.gz ./target/release/tq
+
       # sed -i "" "s/{{tarball}}/test/" support/homebrew-formula.rb
       # git clone git@github.com:4rbor/homebrew-tq.git
       # rm homebrew-tq/Formula/tq.rb
@@ -35,8 +37,6 @@ jobs:
       # git commit -m "Update to version: $VER"
       # git push
 
-      - name: Checkout code
-        uses: actions/checkout@v2
       - name: Build Binaries
         run: |
           cargo build --release
