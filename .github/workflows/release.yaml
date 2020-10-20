@@ -21,6 +21,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Setup variables
+        run: |
+          export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
+          echo "::set-env name=APP_VERSION::$APP_VERSION"
       - name: Test
         # We already test as a part fo the ci.yaml, this is just
         # an additional safety measure before creating any releases.
