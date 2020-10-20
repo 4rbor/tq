@@ -1,2 +1,3 @@
 /target
-# .arbor
+.arbor/*
+!.arbor/.gitkeep
