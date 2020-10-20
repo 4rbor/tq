@@ -2,6 +2,17 @@
 
 Command line TOML processor
 
+## Installation
+
+```sh
+$ brew tap 4rbor/tq
+$ brew install tq
+```
+
+Eventually, after several of the currently missing features are implemented
+we may try to get this library into the [homebrew-core](https://github.com/Homebrew/homebrew-core)
+formula, but for now you can use our custom tap.
+
 ## Example File Inputs
 
 ```sh
@@ -22,9 +33,3 @@ Today only the basics of `tq` exist, but contributions are welcome! What's next?
 - [Conditionals and Comparisons](https://stedolan.github.io/jq/manual/#ConditionalsandComparisons)
 - [Regular Expressions](https://stedolan.github.io/jq/manual/#RegularexpressionsPCRE)
 - [Math](https://stedolan.github.io/jq/manual/#Math)
-
-## Installation
-
-Eventually, after several of the currently missing features are implemented
-we may try to get this library into the [homebrew-core](https://github.com/Homebrew/homebrew-core)
-formulae, but for now you can use our custom tap.

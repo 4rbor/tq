@@ -65,10 +65,7 @@ jobs:
           mkdir ~/.ssh && touch ~/.ssh/id_rsa
           echo "${{ secrets.DEPLOY_PRIVATE_KEY }}" >> ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
           git clone git@github.com:4rbor/homebrew-tq.git && rm homebrew-tq/Formula/tq.rb
-          mv support/homebrew-formula.rb homebrew-tq/Formula/tq.rb
-          pwd && ls
-          cd homebrew-tq
-          pwd && ls
+          mv support/homebrew-formula.rb homebrew-tq/Formula/tq.rb && cd homebrew-tq
           sed -i "s@_tarball_@${{ steps.upload_release_assets.outputs.browser_download_url }}@" ./Formula/tq.rb
           sed -i "s@_sha256_@$SHA256@" ./Formula/tq.rb
           sed -i "s@_version_@$APP_VERSION@" ./Formula/tq.rb
