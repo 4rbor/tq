@@ -42,12 +42,12 @@ jobs:
           draft: false
           prerelease: false
       - name: Export Release URL
-        run: touch upload_url && echo ${{steps.create_release.outputs.upload_url}} > upload_url
+        run: echo ${{steps.create_release.outputs.upload_url}} > upload_url.txt
       - name: Upload Shared Release URL
         uses: actions/upload-artifact@v2
         with:
           name: upload_url
-          path: upload_url
+          path: upload_url.txt
 
   release-macos:
     name: Create MacOS Release
@@ -59,7 +59,7 @@ jobs:
       - name: Download a single artifact
         uses: actions/download-artifact@v2
         with:
-          name: upload_url
+          name: upload_url.txt
       - name: Setup variables
         run: |
           export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
