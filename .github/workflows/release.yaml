@@ -25,7 +25,6 @@ jobs:
       - name: Setup variables
         run: |
           export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
-          echo $APP_VERSION
           echo "::set-env name=APP_VERSION::$APP_VERSION"
 
       # sed -i "" "s/{{tarball}}/test/" support/homebrew-formula.rb
@@ -41,7 +40,7 @@ jobs:
         run: |
           cargo build --release
           tar -czf .arbor/tq-mac.tar.gz ./target/release/tq
-          shasum -a 256 .arbor/tq-mac.tar.gz
+          echo "::set-env name=SHA256::$(shasum -a 256 .arbor/tq-mac.tar.gz)"
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -60,7 +59,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./.arbor/tq-mac.tar.gz
           asset_name: tq-mac.tar.gz
           asset_content_type: application/gzip
