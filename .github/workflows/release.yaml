@@ -15,6 +15,10 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
+      - name: Setup variables
+        run: |
+          export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
+          echo "::set-env name=APP_VERSION::$APP_VERSION"
       # cargo build --release
       # tar -czf .arbor/tq-mac.tar.gz ./target/release/tq
       # sed -i "" "s/{{tarball}}/test/" support/homebrew-formula.rb
@@ -40,8 +44,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ env.APP_VERSION }}
+          release_name: Release ${{ env.APP_VERSION }}
           body: |
             Automated Release
           draft: false
