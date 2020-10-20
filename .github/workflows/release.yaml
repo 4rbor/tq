@@ -72,9 +72,9 @@ jobs:
           pwd && ls
           cd homebrew-tq
           pwd && ls
-          sed -i "s/%%tarball%%/$APP_VERSION/" ./Formula/tq.rb
-          sed -i "s/%%sha256%%/$SHA256/" ./Formula/tq.rb
-          sed -i "s/%%version%%/$APP_VERSION/" ./Formula/tq.rb
+          sed -i "s/_tarball/$APP_VERSION/" ./Formula/tq.rb
+          sed -i "s/_sha256_/$SHA256/" ./Formula/tq.rb
+          sed -i "s/_version_/$APP_VERSION/" ./Formula/tq.rb
           cat Formula/tq.rb
 
       # sed -i "" "s/{{tarball}}/test/" support/homebrew-formula.rb
