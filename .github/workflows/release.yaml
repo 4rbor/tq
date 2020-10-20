@@ -33,32 +33,29 @@ jobs:
           tar -czf .arbor/tq-mac.tar.gz ./target/release/tq
           echo "::set-env name=SHA256::$(shasum -a 256 .arbor/tq-mac.tar.gz | awk '{ print $1 }')"
 
-      # - name: Create Github Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      #   with:
-      #     tag_name: ${{ env.APP_VERSION }}
-      #     release_name: Release ${{ env.APP_VERSION }}
-      #     body: |
-      #       Automated Release
-      #     draft: false
-      #     prerelease: false
+      - name: Create Github Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ env.APP_VERSION }}
+          release_name: Release ${{ env.APP_VERSION }}
+          body: |
+            Automated Release
+          draft: false
+          prerelease: false
 
-      # - name: Upload Release Assets to Github
-      #   id: upload-release-asset
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./.arbor/tq-mac.tar.gz
-      #     asset_name: tq-mac.tar.gz
-      #     asset_content_type:
-      #       application/gzip
-
-      # browser_download_url
+      - name: Upload Release Assets to Github
+        id: upload_release_assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./.arbor/tq-mac.tar.gz
+          asset_name: tq-mac.tar.gz
+          asset_content_type: application/gzip
 
       - name: Homebrew Release
         id: create-homebrew-release
@@ -72,32 +69,11 @@ jobs:
           pwd && ls
           cd homebrew-tq
           pwd && ls
-          echo sed -i "s@_tarball_@$APP_VERSION@" ./Formula/tq.rb
-          echo sed -i "s@_sha256_@$SHA256@" ./Formula/tq.rb
-          echo sed -i "s@_version_@$APP_VERSION@" ./Formula/tq.rb
-          sed -i "s@_tarball_@$APP_VERSION@" ./Formula/tq.rb
+          sed -i "s@_tarball_@${{ steps.upload_release_assets.outputs.browser_download_url }}@" ./Formula/tq.rb
           sed -i "s@_sha256_@$SHA256@" ./Formula/tq.rb
           sed -i "s@_version_@$APP_VERSION@" ./Formula/tq.rb
           cat Formula/tq.rb
 
-      # sed -i "" "s/{{tarball}}/test/" support/homebrew-formula.rb
-      # git clone git@github.com:4rbor/homebrew-tq.git
-      # rm homebrew-tq/Formula/tq.rb
-      # cp tq.rb homebrew-tq/Formula/tq.rb
-      # cd homebrew-tq
       # git add -A
       # git commit -m "Update to version: $VER"
       # git push
-
-  # homebrew-release:
-  #   runs-on: macos-latest
-  #   steps:
-  # - name: Release Homebrew Formula
-  #   if: github.event.release.prerelease != true
-  #   uses: garden-io/update-homebrew-action@v1
-  #   with:
-  #     packageName: "tq"
-  #     templatePath: "support/homebrew-formula.rb"
-  #     tapRepo: "4rbor/homebrew-tq"
-  #     srcRepo: "4rbor/tq"
-  #     authToken: ${{ secrets.AUTH_TOKEN }}
