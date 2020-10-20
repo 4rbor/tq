@@ -81,8 +81,8 @@ jobs:
 
   release-tap:
     name: Release New Tap
-    needs: ["compile-macos"]
-    # needs: ["compile-macos", "compile-linux"]
+    needs: ["release-macos"]
+    # needs: ["release-macos", "release-linux"]
     runs-on: ubuntu-20.04
     steps:
       - name: Homebrew Release
