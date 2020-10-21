@@ -5,14 +5,11 @@ defaults:
     shell: bash
 
 on:
+  # We may want to change this build strategy in the future
+  # but for now merging with the main branch seems acceptable.
   push:
     branches:
-      - "feature/ci"
-
-# TODO: Adjust this to published releases
-# on: push
-# release:
-#   types: [published]
+      - "main"
 
 jobs:
   gh-release:
