@@ -7,7 +7,7 @@ defaults:
 on:
   push:
     branches:
-      - "main"
+      - "feature/ci"
 
 # TODO: Adjust this to published releases
 # on: push
