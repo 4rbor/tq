@@ -112,7 +112,7 @@ jobs:
   release-linux:
     name: Create Linux Release
     needs: ["gh-release"]
-    runs-on: macos-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
