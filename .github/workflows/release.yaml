@@ -5,14 +5,11 @@ defaults:
     shell: bash
 
 on:
+  # We may want to change this build strategy in the future
+  # but for now merging with the main branch seems acceptable.
   push:
     branches:
       - "main"
-
-# TODO: Adjust this to published releases
-# on: push
-# release:
-#   types: [published]
 
 jobs:
   gh-release:
@@ -109,9 +106,64 @@ jobs:
           name: macos_download_url
           path: macos_download_url.txt
 
+  release-linux:
+    name: Create Linux Release
+    needs: ["gh-release"]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download a single artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: upload_url
+
+      - name: Setup variables
+        run: |
+          export UPLOAD_URL=$(cat upload_url.txt | awk '{ print $1 }')
+          export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
+          echo "::set-env name=UPLOAD_URL::$UPLOAD_URL"
+          echo "::set-env name=APP_VERSION::$APP_VERSION"
+
+      - name: Build Binaries
+        run: |
+          cargo build --release
+          chmod +x ./target/release/tq
+          tar -czf .arbor/tq-lin.tar.gz -C ./target/release tq
+          echo "::set-env name=SHA256::$(shasum -a 256 .arbor/tq-lin.tar.gz | awk '{ print $1 }')"
+
+      - name: Export Linux SHA256
+        run: echo "$SHA256" > lin_sha256.txt
+
+      - name: Upload Linux SHA256
+        uses: actions/upload-artifact@v2
+        with:
+          name: lin_sha256
+          path: lin_sha256.txt
+
+      - name: Upload Release Assets to Github
+        id: upload_release_assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: ./.arbor/tq-lin.tar.gz
+          asset_name: tq-lin.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Export Linux Download URL
+        run: echo "${{steps.upload_release_assets.outputs.browser_download_url}}" > lin_download_url.txt
+      - name: Upload Linux Download URL
+        uses: actions/upload-artifact@v2
+        with:
+          name: lin_download_url
+          path: lin_download_url.txt
+
   release-tap:
     name: Release New Tap
-    needs: ["release-macos"]
+    needs: ["release-macos", "release-linux"]
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout code
@@ -127,12 +179,26 @@ jobs:
         with:
           name: macos_download_url
 
+      - name: Download Linux Sha256
+        uses: actions/download-artifact@v2
+        with:
+          name: lin_sha256
+
+      - name: Download Linux Download URL
+        uses: actions/download-artifact@v2
+        with:
+          name: lin_download_url
+
       - name: Setup variables
         run: |
           export MACOS_SHA256=$(cat macos_sha256.txt | awk '{ print $1 }')
           echo "::set-env name=MACOS_SHA256::$MACOS_SHA256"
           export MACOS_TARBALL=$(cat macos_download_url.txt | awk '{ print $1 }')
           echo "::set-env name=MACOS_TARBALL::$MACOS_TARBALL"
+          export LIN_SHA256=$(cat lin_sha256.txt | awk '{ print $1 }')
+          echo "::set-env name=LIN_SHA256::$LIN_SHA256"
+          export LIN_TARBALL=$(cat lin_download_url.txt | awk '{ print $1 }')
+          echo "::set-env name=LIN_TARBALL::$LIN_TARBALL"
           export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
           echo "::set-env name=APP_VERSION::$APP_VERSION"
 
@@ -145,9 +211,12 @@ jobs:
           echo "${{ secrets.DEPLOY_PRIVATE_KEY }}" >> ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
           git clone git@github.com:4rbor/homebrew-tq.git && rm homebrew-tq/Formula/tq.rb
           mv support/homebrew-formula.rb homebrew-tq/Formula/tq.rb && cd homebrew-tq
-          sed -i '' "s@_mactar_@${{ env.MACOS_TARBALL }}@" ./Formula/tq.rb
-          sed -i '' "s@_macsha_@${{ env.MACOS_SHA256 }}@" ./Formula/tq.rb
-          sed -i '' "s@_version_@${{ env.APP_VERSION }}@" ./Formula/tq.rb
+          ls -la && pwd
+          sed -i "s@_mactar_@${{ env.MACOS_TARBALL }}@" ./Formula/tq.rb
+          sed -i "s@_macsha_@${{ env.MACOS_SHA256 }}@" ./Formula/tq.rb
+          sed -i "s@_lintar_@${{ env.LIN_TARBALL }}@" ./Formula/tq.rb
+          sed -i "s@_linsha_@${{ env.LIN_SHA256 }}@" ./Formula/tq.rb
+          sed -i "s@_version_@${{ env.APP_VERSION }}@" ./Formula/tq.rb
           cat Formula/tq.rb
           git add .
           git commit -m "Update to version: ${{ env.APP_VERSION }}"
