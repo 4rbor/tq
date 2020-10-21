@@ -146,9 +146,9 @@ jobs:
           git clone git@github.com:4rbor/homebrew-tq.git && rm homebrew-tq/Formula/tq.rb
           mv support/homebrew-formula.rb homebrew-tq/Formula/tq.rb && cd homebrew-tq
           ls -la && pwd
-          sed -i '' "s@_mactar_@${{ env.MACOS_TARBALL }}@" ./Formula/tq.rb
-          sed -i '' "s@_macsha_@${{ env.MACOS_SHA256 }}@" ./Formula/tq.rb
-          sed -i '' "s@_version_@${{ env.APP_VERSION }}@" ./Formula/tq.rb
+          sed -i "s@_mactar_@${{ env.MACOS_TARBALL }}@" ./Formula/tq.rb
+          sed -i "s@_macsha_@${{ env.MACOS_SHA256 }}@" ./Formula/tq.rb
+          sed -i "s@_version_@${{ env.APP_VERSION }}@" ./Formula/tq.rb
           cat Formula/tq.rb
           git add .
           git commit -m "Update to version: ${{ env.APP_VERSION }}"
