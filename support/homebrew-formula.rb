@@ -4,11 +4,11 @@ class Tq < Formula
   version "_version_"
 
   if OS.mac?
-    url "_macos_tarball_"
-    sha256 "_macos_sha256_"
+    url "_mactar_"
+    sha256 "_macsha_"
   elsif OS.linux?
-    url "_linux_tarball_"
-    sha256 "_linux_sha256_"
+    url "_lintar_"
+    sha256 "_linsha_"
   end
 
   def install
