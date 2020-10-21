@@ -92,7 +92,7 @@ jobs:
           asset_name: tq-mac.tar.gz
           asset_content_type: application/gzip
       - name: Export MacOS Download URL
-        run: echo "${{steps.upload_release_assets.outputs.upload_url}}" > macos_download_url.txt
+        run: echo "${{steps.upload_release_assets.outputs.browser_download_url}}" > macos_download_url.txt
       - name: Upload MacOS Download URL
         uses: actions/upload-artifact@v2
         with:
