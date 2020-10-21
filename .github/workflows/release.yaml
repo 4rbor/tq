@@ -102,9 +102,10 @@ jobs:
   release-tap:
     name: Release New Tap
     needs: ["release-macos"]
-    # needs: ["release-macos", "release-linux"]
     runs-on: ubuntu-20.04
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Download MacOS Sha256
         uses: actions/download-artifact@v2
         with:
