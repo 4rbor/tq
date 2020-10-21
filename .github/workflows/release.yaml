@@ -22,7 +22,7 @@ jobs:
       - name: Setup variables
         run: |
           export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
-          echo "::set-env name=APP_VERSION::$APP_VERSION"
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
       - name: Test
         # We already test as a part fo the ci.yaml, this is just
@@ -68,15 +68,15 @@ jobs:
         run: |
           export UPLOAD_URL=$(cat upload_url.txt | awk '{ print $1 }')
           export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
-          echo "::set-env name=UPLOAD_URL::$UPLOAD_URL"
-          echo "::set-env name=APP_VERSION::$APP_VERSION"
+          echo "UPLOAD_URL=$UPLOAD_URL" >> $GITHUB_ENV
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
       - name: Build Binaries
         run: |
           cargo build --release
           chmod +x ./target/release/tq
           tar -czf .arbor/tq-mac.tar.gz -C ./target/release tq
-          echo "::set-env name=SHA256::$(shasum -a 256 .arbor/tq-mac.tar.gz | awk '{ print $1 }')"
+          echo "SHA256=$(shasum -a 256 .arbor/tq-mac.tar.gz | awk '{ print $1 }')" >> $GITHUB_ENV
 
       - name: Export MacOS SHA256
         run: echo "$SHA256" > macos_sha256.txt
@@ -123,15 +123,15 @@ jobs:
         run: |
           export UPLOAD_URL=$(cat upload_url.txt | awk '{ print $1 }')
           export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
-          echo "::set-env name=UPLOAD_URL::$UPLOAD_URL"
-          echo "::set-env name=APP_VERSION::$APP_VERSION"
+          echo "UPLOAD_URL=$UPLOAD_URL" >> $GITHUB_ENV
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
       - name: Build Binaries
         run: |
           cargo build --release
           chmod +x ./target/release/tq
           tar -czf .arbor/tq-lin.tar.gz -C ./target/release tq
-          echo "::set-env name=SHA256::$(shasum -a 256 .arbor/tq-lin.tar.gz | awk '{ print $1 }')"
+          echo "SHA256=$(shasum -a 256 .arbor/tq-mac.tar.gz | awk '{ print $1 }')" >> $GITHUB_ENV
 
       - name: Export Linux SHA256
         run: echo "$SHA256" > lin_sha256.txt
@@ -192,15 +192,15 @@ jobs:
       - name: Setup variables
         run: |
           export MACOS_SHA256=$(cat macos_sha256.txt | awk '{ print $1 }')
-          echo "::set-env name=MACOS_SHA256::$MACOS_SHA256"
+          echo "MACOS_SHA256=$MACOS_SHA256" >> $GITHUB_ENV
           export MACOS_TARBALL=$(cat macos_download_url.txt | awk '{ print $1 }')
-          echo "::set-env name=MACOS_TARBALL::$MACOS_TARBALL"
+          echo "MACOS_TARBALL=$MACOS_TARBALL" >> $GITHUB_ENV
           export LIN_SHA256=$(cat lin_sha256.txt | awk '{ print $1 }')
-          echo "::set-env name=LIN_SHA256::$LIN_SHA256"
+          echo "LIN_SHA256=$LIN_SHA256" >> $GITHUB_ENV
           export LIN_TARBALL=$(cat lin_download_url.txt | awk '{ print $1 }')
-          echo "::set-env name=LIN_TARBALL::$LIN_TARBALL"
+          echo "LIN_TARBALL=$LIN_TARBALL" >> $GITHUB_ENV
           export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
-          echo "::set-env name=APP_VERSION::$APP_VERSION"
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
       - name: Homebrew Release
         id: create-homebrew-release
