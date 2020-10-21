@@ -62,27 +62,29 @@ fn main() {
     // Step 4: output
     let full_filter_string = matches.value_of("filter").unwrap();
     let filter_pass = full_filter_string.split("|");
-    let value = filter_pass.fold(&toml_file, |acc, filter_str| {
-        // Identity filter
+
+    let mut value: toml::Value = toml_file.clone();
+    for filter_str in filter_pass {
         if filter_str.trim() == "." {
-            return acc;
+            continue;
         }
 
         let keys = filter_str.split(".");
         let _count = filter_str.split(".").count();
 
-        let mut toml_value = &toml_file;
+        let mut val: toml::Value = value;
         for key in keys {
             let trimmed_key = key.trim();
             if trimmed_key == "" {
                 continue;
             }
 
-            toml_value = toml_value.get(key).unwrap();
+            val = val.get(trimmed_key).unwrap().clone();
         }
-        return toml_value;
-    });
 
-    println!("{}", value);
+        value = val;
+    }
+
+    println!("{}", &value);
     std::process::exit(0);
 }
