@@ -145,6 +145,7 @@ jobs:
           echo "${{ secrets.DEPLOY_PRIVATE_KEY }}" >> ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
           git clone git@github.com:4rbor/homebrew-tq.git && rm homebrew-tq/Formula/tq.rb
           mv support/homebrew-formula.rb homebrew-tq/Formula/tq.rb && cd homebrew-tq
+          ls -la && pwd
           sed -i '' "s@_mactar_@${{ env.MACOS_TARBALL }}@" ./Formula/tq.rb
           sed -i '' "s@_macsha_@${{ env.MACOS_SHA256 }}@" ./Formula/tq.rb
           sed -i '' "s@_version_@${{ env.APP_VERSION }}@" ./Formula/tq.rb
