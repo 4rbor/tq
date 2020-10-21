@@ -21,14 +21,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Setup variables
         run: |
           export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
           echo "::set-env name=APP_VERSION::$APP_VERSION"
+
       - name: Test
         # We already test as a part fo the ci.yaml, this is just
         # an additional safety measure before creating any releases.
         run: cargo test
+
       - name: Create Github Release
         id: create_release
         uses: actions/create-release@v1
@@ -41,8 +44,10 @@ jobs:
             Automated Release
           draft: false
           prerelease: false
+
       - name: Export Release URL
         run: echo "${{steps.create_release.outputs.upload_url}}" > upload_url.txt
+
       - name: Upload Shared Release URL
         uses: actions/upload-artifact@v2
         with:
@@ -56,10 +61,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Download a single artifact
         uses: actions/download-artifact@v2
         with:
           name: upload_url
+
       - name: Setup variables
         run: |
           export UPLOAD_URL=$(cat upload_url.txt | awk '{ print $1 }')
@@ -73,8 +80,10 @@ jobs:
           chmod +x ./target/release/tq
           tar -czf .arbor/tq-mac.tar.gz -C ./target/release tq
           echo "::set-env name=SHA256::$(shasum -a 256 .arbor/tq-mac.tar.gz | awk '{ print $1 }')"
+
       - name: Export MacOS SHA256
         run: echo "$SHA256" > macos_sha256.txt
+
       - name: Upload MacOS SHA256
         uses: actions/upload-artifact@v2
         with:
@@ -91,6 +100,7 @@ jobs:
           asset_path: ./.arbor/tq-mac.tar.gz
           asset_name: tq-mac.tar.gz
           asset_content_type: application/gzip
+
       - name: Export MacOS Download URL
         run: echo "${{steps.upload_release_assets.outputs.browser_download_url}}" > macos_download_url.txt
       - name: Upload MacOS Download URL
@@ -106,14 +116,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Download MacOS Sha256
         uses: actions/download-artifact@v2
         with:
           name: macos_sha256
+
       - name: Download MacOS Download URL
         uses: actions/download-artifact@v2
         with:
           name: macos_download_url
+
       - name: Setup variables
         run: |
           export MACOS_SHA256=$(cat macos_sha256.txt | awk '{ print $1 }')
@@ -122,6 +135,7 @@ jobs:
           echo "::set-env name=MACOS_TARBALL::$MACOS_TARBALL"
           export APP_VERSION=$(cat Cargo.toml| grep version -m 1 | awk -F '"' '{ print $2 }')
           echo "::set-env name=APP_VERSION::$APP_VERSION"
+
       - name: Homebrew Release
         id: create-homebrew-release
         run: |
