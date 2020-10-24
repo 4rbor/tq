@@ -1,5 +1,3 @@
-use toml;
-
 fn main() {
     let matches = tq::read_args();
 
@@ -61,16 +59,16 @@ fn main() {
     // Step 3: handle various piping scenarios
     // Step 4: output
     let full_filter_string = matches.value_of("filter").unwrap();
-    let filter_pass = full_filter_string.split("|");
+    let filter_pass = full_filter_string.split('|');
 
-    let mut value: toml::Value = toml_file.clone();
+    let mut value: toml::Value = toml_file;
     for filter_str in filter_pass {
         if filter_str.trim() == "." {
             continue;
         }
 
-        let keys = filter_str.split(".");
-        let _count = filter_str.split(".").count();
+        let keys = filter_str.split('.');
+        let _count = filter_str.split('.').count();
 
         let mut val: toml::Value = value;
         for key in keys {

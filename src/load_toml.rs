@@ -1,6 +1,5 @@
 use std::fs::File;
 use std::io::{self, Read};
-use toml;
 
 use crate::errors::*;
 
